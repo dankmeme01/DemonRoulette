@@ -3,26 +3,28 @@
 class Demonlist {
 	bool initialized = false;
 	rng_type rng;
-	rng_type::result_type seed;
+	rng_type::result_type seed = 0;
 	std::vector<Demon> demons = {};
 	std::uniform_int_distribution<rng_type::result_type> udist;
-	std::string avg_diff;
+	DemonType difficulty = DemonType::UNSPECIFIED;
 
 public:
-	Demonlist(std::vector<Demon> listDemons, std::string difficulty) {
+	Demonlist(std::vector<Demon> listDemons, DemonType difficulty_) {
 		for (Demon& demon : listDemons) {
 			demons.push_back(demon);
 		}
-		avg_diff = difficulty;
+		difficulty = difficulty_;
 		Initialize();
 	}
 	Demonlist() {}
 	
 	bool isInitialized() { return initialized; }
 
-	std::string getDifficulty() { return avg_diff; }
+	DemonType getDifficulty() { return difficulty; }
 
 	rng_type::result_type getSeed() { return seed; }
+
+	void setSeed(rng_type::result_type seed_) { seed = seed_; Initialize(); }
 
 	std::vector<Demon> getDemons() {
 		if (!initialized) throw std::invalid_argument("Demonlist object not initialized");
@@ -38,7 +40,9 @@ public:
 
 private:
 	void Initialize() {
-		this->seed = get_seed();
+		if (seed <= 0) {
+			seed = get_seed();
+		}
 		rng.seed(seed);
 		udist = std::uniform_int_distribution<rng_type::result_type>(0, (unsigned int) demons.size() - 1);
 		initialized = true;

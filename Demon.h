@@ -2,12 +2,15 @@
 #ifndef DEMON_H
 #define DEMON_H
 enum class DemonType {
-	EASY_DEMON = 1,
-	MEDIUM_DEMON = 2,
-	HARD_DEMON = 3,
-	INSANE_DEMON = 4,
-	EXTREME_DEMON = 5
+	EASY_DEMON,
+	MEDIUM_DEMON,
+	HARD_DEMON,
+	INSANE_DEMON,
+	EXTREME_DEMON,
+	UNSPECIFIED
 };
+
+std::string getDemonString(DemonType);
 
 class Demon {
 	bool initialized = false;
@@ -43,16 +46,21 @@ public:
 
 	Demon() {}
 
-	friend bool operator ==(const Demon& d1, const Demon& d2);
-
 private:
 	std::string getName() {
 		return name + " by " + uploader + " (" + std::to_string(id) + ")";
 	}
 };
 
-bool operator == (const Demon& d1, const Demon& d2) {
-	return d1.id == d2.id;
+std::string getDemonString(DemonType d) {
+	switch (d) {
+	case DemonType::EASY_DEMON: return "Easy demon";
+	case DemonType::MEDIUM_DEMON: return "Medium demon";
+	case DemonType::HARD_DEMON: return "Hard demon";
+	case DemonType::INSANE_DEMON: return "Insane demon";
+	case DemonType::EXTREME_DEMON: return "Extreme demon";
+	case DemonType::UNSPECIFIED: return "Unspecified";
+	default: return "";
+	};
 }
-
 #endif

@@ -4296,8 +4296,8 @@ std::vector<Demon> extremeDemons = {
     Demon("Apparition", 71696716, "Annon", DemonType::EXTREME_DEMON)
 };
 
-Demonlist EASY_DEMONS(easyDemons, "Easy demon");
-Demonlist MEDIUM_DEMONS(mediumDemons, "Medium demon");
-Demonlist HARD_DEMONS(hardDemons, "Hard demon");
-Demonlist INSANE_DEMONS(insaneDemons, "Insane demon");
-Demonlist EXTREME_DEMONS(extremeDemons, "Extreme demon");
+Demonlist EASY_DEMONS(easyDemons, DemonType::EASY_DEMON);
+Demonlist MEDIUM_DEMONS(mediumDemons, DemonType::MEDIUM_DEMON);
+Demonlist HARD_DEMONS(hardDemons, DemonType::HARD_DEMON);
+Demonlist INSANE_DEMONS(insaneDemons, DemonType::INSANE_DEMON);
+Demonlist EXTREME_DEMONS(extremeDemons, DemonType::EXTREME_DEMON);
