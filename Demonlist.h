@@ -40,7 +40,7 @@ private:
 	void Initialize() {
 		this->seed = get_seed();
 		rng.seed(seed);
-		udist = std::uniform_int_distribution<rng_type::result_type>(0,demons.size()-1);
+		udist = std::uniform_int_distribution<rng_type::result_type>(0, (unsigned int) demons.size() - 1);
 		initialized = true;
 	}
 

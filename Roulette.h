@@ -43,7 +43,7 @@ public:
 
 	std::string nextString() {
 		Demon demon = next();
-		return demon.string(percentage);
+		return demon.string((int)percentage);
 	}
 
 	bool ended() {
@@ -51,7 +51,7 @@ public:
 	}
 
 private:
-	Demon at(int position) {
+	Demon at(size_t position) {
 		Demon x = demons.at(position-1);
 		return x;
 	}

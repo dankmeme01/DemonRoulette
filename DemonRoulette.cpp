@@ -69,4 +69,8 @@ int main() {
 		"Difficulty: " << roulette.getDifficulty() << std::endl <<
 		"Total score: " << roulette.getPercentage() << std::endl <<
 		"Time took: " << humanReadableTime(timeTook);
+
+	std::cout << std::endl << "Press any key to continue.." << std::endl;
+	std::string a;
+	std::cin >> a;
 }
