@@ -78,10 +78,10 @@ int main() {
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	long long timeTook = std::chrono::duration_cast<std::chrono::seconds>(end - begin).count();
-	std::cout << std::endl << "Game over!" << std::endl;
+	std::cout << "Game over!" << std::endl;
 	std::cout << "Roulette stats:" << std::endl <<
 		(
-			roulette.getPercentage() > 100 ?
+			roulette.ended() ?
 				("Seed: " + std::to_string(roulette.getSeed())) :
 				("Savecode: " + (saveRoulette(&roulette)))
 		)
