@@ -43,16 +43,16 @@ public:
 
 	Demon() {}
 
-	bool operator <(const Demon& demon) const {
-		return id < demon.id;
-	}
-	bool operator >(const Demon& demon) const {
-		return id > demon.id;
-	}
+	friend bool operator ==(const Demon& d1, const Demon& d2);
 
 private:
 	std::string getName() {
 		return name + " by " + uploader + " (" + std::to_string(id) + ")";
 	}
 };
+
+bool operator == (const Demon& d1, const Demon& d2) {
+	return d1.id == d2.id;
+}
+
 #endif

@@ -12,6 +12,7 @@
 #include <string>
 #include <sstream>
 #include <iterator>
+#include <algorithm>
 
 typedef std::mt19937 rng_type;
 

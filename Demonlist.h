@@ -45,7 +45,6 @@ private:
 	}
 
 	rng_type::result_type get_seed() {
-		return (rng_type::result_type)1234567;
 		return (rng_type::result_type) time(NULL); //ok
 	}
 };

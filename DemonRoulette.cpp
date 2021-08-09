@@ -61,6 +61,7 @@ int main() {
 			break;
 		}
 	}
+
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	long long timeTook = std::chrono::duration_cast<std::chrono::seconds>(end - begin).count();
 	std::cout << "Roulette stats:" << std::endl <<

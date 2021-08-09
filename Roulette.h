@@ -3,26 +3,23 @@
 #include <stdexcept>
 #include <set>
 
-bool cmp(Demon a, Demon b) {
-	return a.id < b.id;
-}
-
 class Roulette {
-	std::set<Demon> demons;
+	std::vector<Demon> demons;
 	size_t percentage = 0;
 	unsigned int seed;
 	std::string difficulty;
 
 public:
-	Roulette(std::set<Demon> rouletteDemons, unsigned int seed_, std::string avg_diff) : demons(rouletteDemons), seed(seed_), difficulty(avg_diff) {}
+	Roulette(std::vector<Demon> rouletteDemons, unsigned int seed_, std::string avg_diff) : demons(rouletteDemons), seed(seed_), difficulty(avg_diff) {}
 
 	Roulette(Demonlist* demonList) {
 		size_t LIST_SIZE = demonList->getDemons().size();
 		size_t MAX_SIZE = LIST_SIZE > 100 ? 100 : LIST_SIZE;
-		std::set<Demon> demons_;
-		while (demons_.size() + 1 < MAX_SIZE) {
+		std::vector<Demon> demons_;
+		while (demons_.size() < MAX_SIZE) {
 			Demon* demon = demonList->getRandomDemon();
-			demons_.insert(*demon);
+			if (std::find_if(demons_.begin(), demons_.end(), [&](const Demon& d) {return d.id == demon->id; }) != demons_.end()) { continue; }
+			demons_.push_back(*demon);
 		}
 
 		demons = demons_;
@@ -55,9 +52,7 @@ public:
 
 private:
 	Demon at(int position) {
-		std::set<Demon>::iterator it = demons.begin();
-		std::advance(it, position-1);
-		Demon x = *it;
+		Demon x = demons.at(position-1);
 		return x;
 	}
 };
