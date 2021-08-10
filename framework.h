@@ -13,6 +13,7 @@
 #include <sstream>
 #include <iterator>
 #include <algorithm>
+#include <base64/base64.cpp>
 
 typedef std::mt19937 rng_type;
 

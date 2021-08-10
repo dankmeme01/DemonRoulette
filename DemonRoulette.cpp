@@ -96,7 +96,8 @@ int main() {
 
 Roulette getRoulette(std::variant<std::string, Demonlist> saveOrList) {
 	try {
-		std::string savecode = std::get<std::string>(saveOrList);
+		std::string savecode_ = std::get<std::string>(saveOrList);
+		std::string savecode = base64_decode(savecode_);
 
 		std::vector<std::string> tokens = split(savecode, '|');
 
@@ -141,7 +142,8 @@ std::string saveRoulette(Roulette *roulette) {
 	int percentage = (int) roulette->getPercentage() - 1;
 	int seed = (int) roulette->getSeed();
 
-	return std::to_string(diff) + "|" + std::to_string(seed) + "|" + std::to_string(percentage);
+	std::string savecode = std::to_string(diff) + "|" + std::to_string(seed) + "|" + std::to_string(percentage);
+	return base64_encode(savecode);
 }
 
 template <typename Out>
