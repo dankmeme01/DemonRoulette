@@ -2,6 +2,26 @@
 #include "Demonlist.h"
 #include "Roulette.h"
 
+#include <json.hpp>
+#include <httplib.h>
+#include <Windows.h>
+
+#include <map>
+#include <filesystem>
+#include <string>
+#include <fstream>
+#include <streambuf>
+#include <ctime>
+#include <direct.h>
+
+namespace fs = std::filesystem;
+using json = nlohmann::json;
+
+size_t write_data(void* ptr, size_t size, size_t nmemb, FILE* stream) {
+    size_t written = fwrite(ptr, size, nmemb, stream);
+    return written;
+}
+
 std::vector<Demon> easyDemons = {
         Demon("The Nightmare", 13519, "Jax", DemonType::EASY_DEMON),
     Demon("THE LIGHTNING ROAD", 55520, "timeless real", DemonType::EASY_DEMON),
@@ -4301,3 +4321,133 @@ Demonlist MEDIUM_DEMONS(mediumDemons, DemonType::MEDIUM_DEMON);
 Demonlist HARD_DEMONS(hardDemons, DemonType::HARD_DEMON);
 Demonlist INSANE_DEMONS(insaneDemons, DemonType::INSANE_DEMON);
 Demonlist EXTREME_DEMONS(extremeDemons, DemonType::EXTREME_DEMON);
+
+std::vector<Demon> JSONtoDemonList(std::vector<std::map<std::string, std::string>> demonObj, DemonType type) {
+    std::vector<Demon> demons;
+    for (const std::map<std::string, std::string> &_demon : demonObj) {
+        std::string name = _demon.at("name");
+        unsigned int id = (unsigned int) atoi(_demon.at("id").c_str());
+        std::string uploader = _demon.at("uploader");
+        
+        demons.push_back(Demon(name, id, uploader, type));
+    }
+    return demons;
+}
+
+void loadFromJSON(json obj) {
+    try {
+        auto easy = obj.at("EASY_DEMON");
+        auto medium = obj.at("MEDIUM_DEMON");
+        auto hard = obj.at("HARD_DEMON");
+        auto insane = obj.at("INSANE_DEMON");
+        auto extreme = obj.at("EXTREME_DEMON");
+
+        auto easy_ = JSONtoDemonList(easy, DemonType::EASY_DEMON);
+        auto medium_ = JSONtoDemonList(medium, DemonType::MEDIUM_DEMON);
+        auto hard_ = JSONtoDemonList(hard, DemonType::HARD_DEMON);
+        auto insane_ = JSONtoDemonList(insane, DemonType::INSANE_DEMON);
+        auto extreme_ = JSONtoDemonList(extreme, DemonType::EXTREME_DEMON);
+
+        EASY_DEMONS = Demonlist(easy_, DemonType::EASY_DEMON);
+        MEDIUM_DEMONS = Demonlist(easy_, DemonType::MEDIUM_DEMON);
+        HARD_DEMONS = Demonlist(easy_, DemonType::HARD_DEMON);
+        INSANE_DEMONS = Demonlist(easy_, DemonType::INSANE_DEMON);
+        EXTREME_DEMONS = Demonlist(easy_, DemonType::EXTREME_DEMON);
+    }
+    catch (std::exception& e) {
+        std::cout << e.what() << std::endl;
+        return;
+    }
+}
+
+void loadFromJSON(std::string jsonString) {
+    return loadFromJSON(json::parse(jsonString));
+}
+
+/*
+void downloadDemons(CURL *curl) {
+    fs::path filePath = fs::temp_directory_path() / "demonRoulette.json";
+    auto out = filePath.string().c_str();
+    if (fs::exists(filePath)) {
+        fs::remove(filePath);
+    }
+
+    FILE* fp;
+    CURLcode res;
+    std::string url = "https://github.com/dankmeme01/DemonRoulette/releases/latest/download/demonRoulette.json";
+
+    if (curl) {
+        fopen_s(&fp, out, "wb");
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+        res = curl_easy_perform(curl);
+        curl_easy_cleanup(curl);
+        curl_global_cleanup();
+        if(fp) fclose(fp);
+
+        if (res == CURLE_OK) {
+            std::ifstream i(filePath);
+            json j;
+            i >> j;
+            loadFromJSON(j);
+
+            time_t _time = (long long) j.at("date");
+            std::tm* ptm = NULL;
+            localtime_s(ptm, &_time);
+
+            int year = ptm->tm_year;
+            int month = ptm->tm_mon;
+            int day = ptm->tm_mday;
+
+            std::cout << "Successfully downloaded most recent demons (from " << (std::to_string(year) + "." + std::to_string(month) + "." + std::to_string(day)) << ")" << std::endl;
+        }
+        else {
+            std::cerr << "cURL error: " << curl_easy_strerror(res) << std::endl;
+        }
+    }
+    else {
+        std::cerr << "cURL was not initialized. Please check your firewall settings or internet connection. Using demons as of 2021.08.13" << std::endl;
+    }
+}*/
+
+void downloadDemons() {
+    std::cout << "Downloading most recent list of demons.." << std::endl;
+    _chdir(fs::temp_directory_path().string().c_str());
+    fs::path filePath = fs::temp_directory_path() / "demonRoulette.json";
+    if (fs::exists(filePath)) {
+        fs::remove(filePath);
+    }
+
+    std::ofstream file;
+    std::string url = "https://github.com";
+
+    file.open("demonRoulette.json");
+    if (!file) { std::cerr << "Could not open file for saving! Using demons as of 2021.08.13" << std::endl; return; }
+    httplib::Client cli(url);
+    cli.set_follow_location(true);
+
+    auto res = cli.Get("/dankmeme01/DemonRoulette/releases/latest/download/demonRoulette.json");
+    if (res->status == 200) {
+        file << res->body;
+        file.close();
+        std::ifstream i(filePath);
+        json j;
+        i >> j;
+        loadFromJSON(j);
+
+        time_t _time = (long long)j.at("date");
+        struct tm ptm;
+
+        localtime_s(&ptm, &_time);
+
+        int year = ptm.tm_year + 1900;
+        int month = ptm.tm_mon + 1;
+        int day = ptm.tm_mday;
+
+        std::cout << "Successfully downloaded most recent demons (from " << (std::to_string(year) + "." + std::to_string(month) + "." + std::to_string(day)) << ")" << std::endl;
+    }
+    else {
+        std::cerr << "An error has occured while downloading demon list file! Code: " << (res->status) << std::endl;
+    }
+}

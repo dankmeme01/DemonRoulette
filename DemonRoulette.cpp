@@ -1,3 +1,7 @@
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+#ifndef CURL_STATICLIB
+#define CURL_STATICLIB
+#endif
 #include "framework.h"
 
 const std::string WHITESPACE = " \n\r\t\f\v";
@@ -28,6 +32,24 @@ std::vector<std::string> split(const std::string&, char);
 std::string trim(const std::string&);
 
 int main() {
+	/*
+	CURL* curl;
+	curl_global_init(CURL_GLOBAL_ALL);
+
+	curl = curl_easy_init();
+	try {
+		downloadDemons(&curl);
+	}
+	catch (std::exception& e) {
+		std::cerr << e.what() << std::endl;
+	}*/
+	try {
+		downloadDemons();
+	}
+	catch (std::exception& e) {
+		std::cout << e.what() << std::endl;
+	}
+
 	Demonlist demonlist;
 	Roulette roulette;
 	bool usingSavecode = false;
