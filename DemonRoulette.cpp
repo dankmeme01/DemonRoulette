@@ -1,4 +1,3 @@
-#define CPPHTTPLIB_OPENSSL_SUPPORT
 #ifndef CURL_STATICLIB
 #define CURL_STATICLIB
 #endif
@@ -32,19 +31,11 @@ std::vector<std::string> split(const std::string&, char);
 std::string trim(const std::string&);
 
 int main() {
-	/*
 	CURL* curl;
 	curl_global_init(CURL_GLOBAL_ALL);
-
 	curl = curl_easy_init();
 	try {
-		downloadDemons(&curl);
-	}
-	catch (std::exception& e) {
-		std::cerr << e.what() << std::endl;
-	}*/
-	try {
-		downloadDemons();
+		downloadDemons(curl);
 	}
 	catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
@@ -83,20 +74,30 @@ int main() {
 	
 	if(!usingSavecode) roulette = getRoulette(demonlist);
 
-	std::cout << "Starting up the roulette. Press enter to get next demon or type 'quit'/'exit' to finish your roulette." << std::endl;
+	std::cout << "Starting up the roulette. After each demon enter your progress or type 'quit'/'exit' to finish your roulette." << std::endl;
 	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-	while (!roulette.ended()) {
-		std::string demon = roulette.nextString();
-		std::cout << demon << std::endl;
+	int nextL = 1;
+	do {
+		std::string demon;
+		try { demon = roulette.nextString(nextL); }
+		catch (std::invalid_argument& e) { break; }
 
+		std::cout << demon << std::endl << "Enter percentage :>";
 		std::string a;
 		getline(std::cin, a);
-
 		if (a == "exit" || a == "quit") {
 			break;
 		}
-	}
+		else {
+			auto thing = std::atoi(a.c_str());
+			if (thing > 100 || (size_t)thing < roulette.getPercentage()) {
+				std::cout << "Invalid percentage. Should be " + std::to_string(roulette.getPercentage()) + "-100" << std::endl;
+				nextL = 0;
+			}
+			else { nextL = thing - (int)roulette.getPercentage() + 1; }
+		} 
+	} while (!roulette.ended());
 
 	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
 	long long timeTook = std::chrono::duration_cast<std::chrono::seconds>(end - begin).count();

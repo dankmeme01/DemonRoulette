@@ -8,7 +8,7 @@ class Roulette {
 	size_t percentage = 0;
 	unsigned int seed;
 	DemonType difficulty = DemonType::UNSPECIFIED;
-	bool initialized;
+	bool initialized = false;
 
 public:
 	Roulette(std::vector<Demon> rouletteDemons, unsigned int seed_, DemonType diff) : demons(rouletteDemons), seed(seed_), difficulty(diff), initialized(true) {}
@@ -41,17 +41,18 @@ public:
 
 	size_t getPercentage() { return percentage; }
 	
-	Demon next() {
+	Demon next(int inc = 1) {
 		if (!initialized) throw std::invalid_argument("Roulette class not initialized.");
-		size_t pos = ++percentage;
+		size_t pos = percentage + inc;
+		percentage += inc;
 		if (pos < 1 || pos > demons.size()) {
 			throw std::invalid_argument("Percentage out of range 1-" + demons.size());
 		}
 		return at(pos);
 	}
 
-	std::string nextString() {
-		Demon demon = next();
+	std::string nextString(int inc = 1) {
+		Demon demon = next(inc);
 		return demon.string((int)percentage);
 	}
 

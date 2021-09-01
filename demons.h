@@ -5,6 +5,7 @@
 #include <json.hpp>
 #include <httplib.h>
 #include <Windows.h>
+#include <curl/curl.h>
 
 #include <map>
 #include <filesystem>
@@ -4364,7 +4365,7 @@ void loadFromJSON(std::string jsonString) {
     return loadFromJSON(json::parse(jsonString));
 }
 
-/*
+
 void downloadDemons(CURL *curl) {
     fs::path filePath = fs::temp_directory_path() / "demonRoulette.json";
     auto out = filePath.string().c_str();
@@ -4377,10 +4378,15 @@ void downloadDemons(CURL *curl) {
     std::string url = "https://github.com/dankmeme01/DemonRoulette/releases/latest/download/demonRoulette.json";
 
     if (curl) {
-        fopen_s(&fp, out, "wb");
+        fopen_s(&fp, filePath.string().c_str(), "wb");
+        if (!fp) {
+            std::cerr << "Could not open file for reading! Path: " << filePath << std::endl;
+            return;
+        }
         curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
         res = curl_easy_perform(curl);
         curl_easy_cleanup(curl);
         curl_global_cleanup();
@@ -4392,13 +4398,14 @@ void downloadDemons(CURL *curl) {
             i >> j;
             loadFromJSON(j);
 
-            time_t _time = (long long) j.at("date");
-            std::tm* ptm = NULL;
-            localtime_s(ptm, &_time);
+            time_t _time = (long long)j.at("date");
+            struct tm ptm;
 
-            int year = ptm->tm_year;
-            int month = ptm->tm_mon;
-            int day = ptm->tm_mday;
+            localtime_s(&ptm, &_time);
+
+            int year = ptm.tm_year + 1900;
+            int month = ptm.tm_mon + 1;
+            int day = ptm.tm_mday;
 
             std::cout << "Successfully downloaded most recent demons (from " << (std::to_string(year) + "." + std::to_string(month) + "." + std::to_string(day)) << ")" << std::endl;
         }
@@ -4409,8 +4416,9 @@ void downloadDemons(CURL *curl) {
     else {
         std::cerr << "cURL was not initialized. Please check your firewall settings or internet connection. Using demons as of 2021.08.13" << std::endl;
     }
-}*/
+}
 
+/*
 void downloadDemons() {
     std::cout << "Downloading most recent list of demons.." << std::endl;
     _chdir(fs::temp_directory_path().string().c_str());
@@ -4450,4 +4458,4 @@ void downloadDemons() {
     else {
         std::cerr << "An error has occured while downloading demon list file! Code: " << (res->status) << std::endl;
     }
-}
+}*/
