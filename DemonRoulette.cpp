@@ -2,6 +2,7 @@
 #define CURL_STATICLIB
 #endif
 #include "framework.h"
+#include "demons.h"
 
 const std::string WHITESPACE = " \n\r\t\f\v";
 std::string join(const std::vector<std::string>& vec, const char* delim) {
@@ -35,7 +36,10 @@ int main() {
 	curl_global_init(CURL_GLOBAL_ALL);
 	curl = curl_easy_init();
 	try {
-		downloadDemons(curl);
+		//downloadDemons(curl);
+		fetchDemons(curl);
+		curl_easy_cleanup(curl);
+		curl_global_cleanup();
 	}
 	catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
@@ -81,7 +85,7 @@ int main() {
 	do {
 		std::string demon;
 		try { demon = roulette.nextString(nextL); }
-		catch (std::invalid_argument& e) { break; }
+		catch (std::invalid_argument&) { break; }
 
 		std::cout << demon << std::endl << "Enter percentage :>";
 		std::string a;

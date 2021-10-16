@@ -2,13 +2,33 @@
 #ifndef DEMON_H
 #define DEMON_H
 enum class DemonType {
-	EASY_DEMON,
-	MEDIUM_DEMON,
-	HARD_DEMON,
-	INSANE_DEMON,
-	EXTREME_DEMON,
-	UNSPECIFIED
+	EASY_DEMON = 1,
+	MEDIUM_DEMON = 2,
+	HARD_DEMON = 3,
+	INSANE_DEMON = 4,
+	EXTREME_DEMON = 5,
+	UNSPECIFIED = -1
 };
+
+DemonType toDType(int d_) {
+	switch (d_) {
+	case 1: return DemonType::EASY_DEMON;
+	case 2: return DemonType::MEDIUM_DEMON;
+	case 3: return DemonType::HARD_DEMON;
+	case 4: return DemonType::INSANE_DEMON;
+	case 5: return DemonType::EXTREME_DEMON;
+	default: return DemonType::UNSPECIFIED;
+	}
+}
+
+DemonType toDType(std::string d_) {
+	if (d_ == "Easy Demon") return DemonType::EASY_DEMON;
+	if (d_ == "Medium Demon") return DemonType::MEDIUM_DEMON;
+	if (d_ == "Hard Demon") return DemonType::HARD_DEMON;
+	if (d_ == "Insane Demon") return DemonType::INSANE_DEMON;
+	if (d_ == "Extreme Demon") return DemonType::EXTREME_DEMON;
+	return DemonType::UNSPECIFIED;
+}
 
 std::string getDemonString(DemonType);
 
