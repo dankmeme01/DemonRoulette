@@ -148,7 +148,6 @@ Demons getAllDemons(CURL* curl) {
         try {
             getPage(curl, &demons, &jsonstruct, page);
             sleep(200);
-            std::cout << "Got page " << page << std::endl;
         }
         catch (HitLevelEnd&) { break; }
         catch (GotRateLimited&) { std::cout << "Rate limited... waiting 5 seconds.." << std::endl; page--; sleep(7500); }
