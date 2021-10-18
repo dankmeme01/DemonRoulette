@@ -79,7 +79,7 @@ int main() {
 	if(!usingSavecode) roulette = getRoulette(demonlist);
 
 	std::cout << "Starting up the roulette. After each demon enter your progress or type 'quit'/'exit' to finish your roulette." << std::endl;
-	std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+	boost::chrono::steady_clock::time_point begin = boost::chrono::steady_clock::now();
 
 	int nextL = 1;
 	do {
@@ -103,8 +103,8 @@ int main() {
 		} 
 	} while (!roulette.ended());
 
-	std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-	long long timeTook = std::chrono::duration_cast<std::chrono::seconds>(end - begin).count();
+	boost::chrono::steady_clock::time_point end = boost::chrono::steady_clock::now();
+	long long timeTook = boost::chrono::duration_cast<boost::chrono::seconds>(end - begin).count();
 	std::cout << "Game over!" << std::endl;
 	std::cout << "Roulette stats:" << std::endl <<
 		(
@@ -116,9 +116,8 @@ int main() {
 		"Total score: " << roulette.getPercentage() - 1 << std::endl <<
 		"Time took: " << humanReadableTime(timeTook);
 
-	std::cout << std::endl << "Press enter to exit..";
-	std::string a;
-	getline(std::cin, a);
+	system("pause");
+	return 0;
 }
 
 Roulette getRoulette(std::variant<std::string, Demonlist> saveOrList) {
